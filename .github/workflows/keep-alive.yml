@@ -1,0 +1,21 @@
+name: Keep Supabase Alive - Lembrei-Listei
+
+on:
+  schedule:
+    # terça e sexta às 03h UTC — mesma cadência de antes, agora batendo
+    # de fora na API de verdade (o que o Supabase realmente conta como atividade)
+    - cron: '0 3 * * 2,5'
+  workflow_dispatch: # permite clicar em "Run workflow" pra testar na hora
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Atualiza o heartbeat via API REST do Supabase
+        run: |
+          curl -sf -X PATCH \
+            "https://ukwlblnxnzcweomrrzwj.supabase.co/rest/v1/keep_alive_heartbeat?id=eq.1" \
+            -H "apikey: sb_publishable_yJUkKqWqgoANO4voob0_AQ_g60jtpcw" \
+            -H "Authorization: Bearer sb_publishable_yJUkKqWqgoANO4voob0_AQ_g60jtpcw" \
+            -H "Content-Type: application/json" \
+            -d "{\"pinged_at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
